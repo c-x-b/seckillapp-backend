@@ -28,17 +28,17 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<Response> register(@RequestBody User user) {
+    public Response register(@RequestBody User user) {
         //logger.info("register user: {}", user);
         HttpHeaders headers = new HttpHeaders();
         //headers.add("Access-Control-Allow-Origin", "*");
         try {
             User registeredUser = userService.register(user);
             logger.info("注册成功:{}", registeredUser);
-            return new ResponseEntity<>(new Response(200, "注册成功", registeredUser), headers, HttpStatus.OK);
+            return new Response(200, "注册成功", registeredUser);
         } catch (Exception e) {
             logger.info("注册失败:{}", e.getMessage());
-            return new ResponseEntity<>(new Response(400, e.getMessage(), null), headers, HttpStatus.BAD_REQUEST);
+            return new Response(400, e.getMessage(), null);
         }
     }
 

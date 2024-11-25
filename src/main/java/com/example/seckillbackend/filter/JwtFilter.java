@@ -33,6 +33,12 @@ public class JwtFilter implements Filter {
             return;
         }
 
+        // 如果是OPTIONS请求，直接放行
+        if ("OPTIONS".equalsIgnoreCase(httpRequest.getMethod())) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         String authHeader = httpRequest.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
