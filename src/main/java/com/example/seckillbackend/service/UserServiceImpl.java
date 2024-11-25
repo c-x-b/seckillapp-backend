@@ -48,4 +48,33 @@ public class UserServiceImpl implements UserService {
         // 保存用户
         return userRepository.save(user);
     }
+
+    @Override
+    public User login(String username, String password) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new RuntimeException("用户不存在");
+        }
+        // 验证密码
+        if (!PasswordUtil.validatePassword(password, user.getSalt(), user.getPassword())) {
+            logger.info("存储的加密密码：{}", user.getPassword());
+            logger.info("存储的盐:{}", user.getSalt());
+            logger.info("输入密码：{}",password);
+            throw new RuntimeException("密码错误");
+        }
+        // 更新最后登录时间和登录次数
+        user.setLastLoginDate(new Date());
+        user.setLoginCount(user.getLoginCount() + 1);
+        userRepository.save(user);
+        return user;
+    }
+
+    @Override
+    public User findById(Long id) {
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            throw new RuntimeException("用户不存在");
+        }
+        return user;
+    }
 }

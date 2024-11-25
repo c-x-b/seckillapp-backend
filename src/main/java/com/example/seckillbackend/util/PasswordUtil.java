@@ -1,10 +1,14 @@
 package com.example.seckillbackend.util;
 
+import com.example.seckillbackend.service.UserServiceImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
 import java.security.SecureRandom;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PasswordUtil {
+
+    private static final Logger logger = LoggerFactory.getLogger(PasswordUtil.class);
 
     private static final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
@@ -28,6 +32,11 @@ public class PasswordUtil {
     // 加密密码
     public static String encryptPassword(String password, String salt) {
         String saltedPassword = password + salt;
-        return encoder.encode(saltedPassword);
+        String encoded = encoder.encode(saltedPassword);
+        return encoded;
+    }
+
+    public static Boolean validatePassword(String password, String salt, String encoded) {
+        return encoder.matches(password + salt, encoded);
     }
 }
