@@ -16,7 +16,7 @@ import java.util.List;
 @Component
 public class JwtFilter implements Filter {
 
-    private static final List<String> EXCLUDE_URLS = Arrays.asList("/api/login", "/api/register");
+    private static final List<String> EXCLUDE_URLS = Arrays.asList("/api/", "/api/login", "/api/register", "/api/products");
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {}
