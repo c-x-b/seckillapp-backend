@@ -16,7 +16,9 @@ import java.util.List;
 @Component
 public class JwtFilter implements Filter {
 
-    private static final List<String> EXCLUDE_URLS = Arrays.asList("/api/", "/api/login", "/api/register", "/api/products");
+    private static final List<String> EXCLUDE_URLS = Arrays.asList("/api/", "/api/login", "/api/register", "/api/products/myadd", "/api/products/myaddBatch",
+            "/images"
+    );
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {}
@@ -28,6 +30,17 @@ public class JwtFilter implements Filter {
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
         String path = httpRequest.getRequestURI(); // 如果请求路径在排除列表中，直接放行
+        if (path.startsWith("/images")) { // 放行所有 /images 开头的路径
+            chain.doFilter(request, response);
+            return;
+        }
+        /*
+        if (path.startsWith("/api/products")) { // 放行所有 /api/products 开头的路径
+            chain.doFilter(request, response);
+            return;
+        }
+
+         */
         if (EXCLUDE_URLS.contains(path)) {
             chain.doFilter(request, response);
             return;
