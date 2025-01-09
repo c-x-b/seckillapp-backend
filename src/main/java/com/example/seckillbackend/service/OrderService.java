@@ -9,4 +9,6 @@ public interface OrderService {
     Page<Order> findOrders(Long userId, int page, int size);
 
     Order findOrderById(Long orderId);
+
+    void saveOrder(Order order);
 }
