@@ -18,7 +18,7 @@ public class Order {
     @Column(name = "goods_id", nullable = false)
     private Long goodsId;
 
-    @Column(name = "delivery_addr_id", nullable = false)
+    @Column(name = "delivery_addr_id")
     private Long deliveryAddrId;
 
     @Column(name = "goods_name", nullable = false, length = 200)
@@ -30,7 +30,7 @@ public class Order {
     @Column(name = "goods_price", nullable = false)
     private BigDecimal goodsPrice;
 
-    @Column(name = "order_channel", nullable = false)
+    @Column(name = "order_channel")
     private Integer orderChannel;
 
     @Column(name = "status", nullable = false)

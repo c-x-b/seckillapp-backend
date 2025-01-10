@@ -3,7 +3,9 @@ package com.example.seckillbackend.repository;
 import com.example.seckillbackend.entity.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpecificationExecutor<Product> {
     // 自定义查询方法（如果需要）
     Product findByName(String name); // 根据商品名称查询商品

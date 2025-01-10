@@ -1,5 +1,6 @@
 package com.example.seckillbackend.service;
 
+import com.example.seckillbackend.dto.OrderRequest;
 import com.example.seckillbackend.entity.Order;
 import com.example.seckillbackend.entity.Product;
 import org.springframework.data.domain.Page;
@@ -9,4 +10,8 @@ public interface OrderService {
     Page<Order> findOrders(Long userId, int page, int size);
 
     Order findOrderById(Long orderId);
+
+    Order createOrder(OrderRequest orderRequest, Long userId);
+
+
 }

@@ -1,7 +1,9 @@
 package com.example.seckillbackend.controller;
 
 import com.example.seckillbackend.dto.OrderDTO;
+import com.example.seckillbackend.dto.OrderRequest;
 import com.example.seckillbackend.entity.Order;
+import com.example.seckillbackend.entity.Response;
 import com.example.seckillbackend.service.OrderService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -67,4 +69,22 @@ public class OrderController {
         }
         return response;
     }
+
+
+    @PostMapping("/AddOrder")
+    public Response createOrder(@RequestBody OrderRequest orderRequest,@RequestAttribute Long userId) {
+        try {
+            // 调用服务层创建订单
+            Order order = orderService.createOrder(orderRequest, userId);
+
+            // 返回订单信息
+            return new Response(200, "订单创建成功", order);
+        } catch (IllegalArgumentException e) {
+            return new Response(400, e.getMessage(), null);
+        } catch (Exception e) {
+            return new Response(500, "服务器内部错误", null);
+        }
+    }
+
+
 }
