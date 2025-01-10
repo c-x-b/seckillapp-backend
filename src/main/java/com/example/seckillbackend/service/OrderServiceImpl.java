@@ -1,5 +1,6 @@
 package com.example.seckillbackend.service;
 
+import com.example.seckillbackend.dto.OrderRequest;
 import com.example.seckillbackend.entity.Order;
 import com.example.seckillbackend.entity.Product;
 import com.example.seckillbackend.repository.OrderRepository;
