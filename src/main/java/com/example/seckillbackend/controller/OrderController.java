@@ -2,8 +2,10 @@ package com.example.seckillbackend.controller;
 
 import com.example.seckillbackend.dto.OrderDTO;
 import com.example.seckillbackend.entity.Order;
+import com.example.seckillbackend.entity.Product;
 import com.example.seckillbackend.entity.Response;
 import com.example.seckillbackend.service.OrderService;
+import com.example.seckillbackend.service.ProductService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +27,9 @@ public class OrderController {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private ProductService productService;
 
     @GetMapping("/orders")
     public Response getOrders(@RequestParam int page, @RequestParam int size, @RequestAttribute Long userId) {
@@ -70,8 +75,16 @@ public class OrderController {
                 if (order.canBeCancelled()) {
                     order.setStatus(6);
                     orderService.saveOrder(order);
-                    return new Response(200, "取消订单成功", null);
-                    //TODO 恢复商品库存
+
+                    // 恢复商品库存
+                    Product product = productService.findById(order.getGoodsId());
+                    if (product != null) {
+                        product.setStock(product.getStock() + order.getGoodsCount());
+                        productService.saveProduct(product);
+                        return new Response(200, "取消订单成功", null);
+                    } else {
+                        return new Response(404, "商品不存在", null);
+                    }
                 } else {
                     return new Response(400, "订单状态不允许取消", null);
                 }
