@@ -1,14 +1,24 @@
 package com.example.seckillbackend.repository;
 
 import com.example.seckillbackend.entity.Product;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpecificationExecutor<Product> {
     // 自定义查询方法（如果需要）
     Product findByName(String name); // 根据商品名称查询商品
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE) // 使用悲观锁，在查询时锁定该行，防止其他事务同时修改。
+    @Query("SELECT p FROM Product p WHERE p.id = :id")
+    Optional<Product> findByIdWithLock(@Param("id") Long id);
 }
 
 /*
