@@ -1,14 +1,14 @@
 package com.example.seckillbackend.controller;
 
-import com.example.seckillbackend.dto.OrderRequest;
-import com.example.seckillbackend.entity.Product;
-import com.example.seckillbackend.entity.Response;
-import com.example.seckillbackend.entity.SeckillProduct;
+import com.example.seckillbackend.config.RabbitMQConfig;
+import com.example.seckillbackend.entity.*;
 import com.example.seckillbackend.service.SeckillService;
 import com.example.seckillbackend.service.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +28,12 @@ public class SeckillController {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+    @Value("${seckill.rabbitmq.queue}")
+    private String seckillQueue;
 
     @GetMapping("/seckills")
     public Response getSeckills(@RequestParam int page, @RequestParam int size) {
@@ -96,7 +102,22 @@ public class SeckillController {
     }
 
     @PostMapping("/seckill/createOrder")
-    public Response createSeckillOrder(@RequestBody OrderRequest orderRequest, @RequestAttribute Long userId) {
-        return null;
+    public Response createSeckillOrder(@RequestBody SeckillOrderRequest orderRequest, @RequestAttribute Long userId) {
+        try {
+            // Create a message containing the order request and user ID
+            Map<String, Object> message = new HashMap<>();
+            message.put("orderRequest", orderRequest);
+            message.put("userId", userId);
+
+            logger.info("即将传递的message: {}", message);
+            // Send the message to the RabbitMQ queue
+            rabbitTemplate.convertAndSend(seckillQueue, message);
+            logger.info("message已传递");
+
+            // Return a response indicating that the request is being processed
+            return new Response(200, "秒杀请求已接收，正在排队中", null);
+        } catch (Exception e) {
+            return new Response(500, "服务器内部错误", e.getMessage());
+        }
     }
 }

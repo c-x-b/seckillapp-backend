@@ -27,6 +27,7 @@ public class SeckillServiceImpl implements SeckillService {
 
     @Override
     public Order createOrder(SeckillOrderRequest seckillOrderRequest, Long userId) {
+        //TODO: 验证秒杀条件，在订单表和秒杀订单表中插入数据，并削减商品库存
         return null;
     }
 }
