@@ -1,12 +1,14 @@
 package com.example.seckillbackend.entity;
 
 import jakarta.persistence.*;
+
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "t_seckill_goods")
-public class SeckillProduct {
+public class SeckillProduct implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -103,20 +103,28 @@ public class SeckillController {
 
     @PostMapping("/seckill/createOrder")
     public Response createSeckillOrder(@RequestBody SeckillOrderRequest orderRequest, @RequestAttribute Long userId) {
+        String seckillId = orderRequest.getSeckillId().toString();
         try {
+            String stockKey = "seckill:stock:" + seckillId;
+            String usersKey = "seckill:users:" + seckillId;
+            boolean success = seckillService.trySeckill(orderRequest.getSeckillId(), orderRequest.getOrderAmount() ,userId);
+            if (!success) {
+                return new Response(400, "秒杀失败：库存不足或重复下单", null);
+            }
+
             // Create a message containing the order request and user ID
             Map<String, Object> message = new HashMap<>();
             message.put("orderRequest", orderRequest);
             message.put("userId", userId);
 
-            logger.info("即将传递的message: {}", message);
             // Send the message to the RabbitMQ queue
             rabbitTemplate.convertAndSend(seckillQueue, message);
-            logger.info("message已传递");
+            logger.info("秒杀请求已发送到队列: 用户ID={} 秒杀ID={}", userId, orderRequest.getSeckillId());
 
             // Return a response indicating that the request is being processed
             return new Response(200, "秒杀请求已接收，正在排队中", null);
         } catch (Exception e) {
+            logger.error("秒杀请求处理失败", e);
             return new Response(500, "服务器内部错误", e.getMessage());
         }
     }

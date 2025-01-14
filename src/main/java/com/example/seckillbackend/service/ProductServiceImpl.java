@@ -3,7 +3,10 @@ package com.example.seckillbackend.service;
 import com.example.seckillbackend.entity.Product;
 import com.example.seckillbackend.repository.ProductRepository;
 import com.example.seckillbackend.service.ProductService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -15,6 +18,8 @@ import java.util.List;
 
 @Service
 public class ProductServiceImpl implements ProductService {
+
+    private static final Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
 
     @Autowired
     private ProductRepository productRepository;
@@ -64,7 +69,9 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
+    @Cacheable(value = "products", key = "#id", unless = "#result == null")
     public Product findById(Long id) {
+        logger.info("findById: Fetching Product with id: {}", id);
         return productRepository.findById(id).orElse(null);
     }
 

@@ -12,4 +12,6 @@ public interface SeckillService {
     SeckillProduct findById(Long id);
 
     Order createOrder(SeckillOrderRequest seckillOrderRequest, Long userId);
+
+    boolean trySeckill(Long seckillId, Integer seckillAmount, Long userId);
 }
