@@ -33,7 +33,15 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+<<<<<<< HEAD
 
+=======
+    public void saveOrder(Order order) {
+        orderRepository.save(order);
+    }
+
+    @Override
+>>>>>>> 23f347fba629bf832958f6241635650d6ed60fa6
     public Order createOrder(OrderRequest orderRequest, Long userId) {
         // 查询商品信息
         Product product = productRepository.findById(orderRequest.getGoodsId())

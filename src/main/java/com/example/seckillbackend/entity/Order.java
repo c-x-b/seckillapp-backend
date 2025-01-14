@@ -130,4 +130,8 @@ public class Order {
     public void setPayDate(LocalDateTime payDate) {
         this.payDate = payDate;
     }
+
+    public boolean canBeCancelled() {
+        return status == 0 || status == 1;
+    }
 }

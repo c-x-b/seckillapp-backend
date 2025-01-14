@@ -11,6 +11,8 @@ public interface OrderService {
 
     Order findOrderById(Long orderId);
 
+    void saveOrder(Order order);
+
     Order createOrder(OrderRequest orderRequest, Long userId);
 
 
