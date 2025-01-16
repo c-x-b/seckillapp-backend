@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.cache.annotation.Cacheable;
 
 import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 @Service
@@ -65,12 +66,17 @@ public class SeckillServiceImpl implements SeckillService {
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.registerModule(new JavaTimeModule());
 
-            String json = (String) redisTemplate.opsForValue().get("seckillProducts::" + id);
+            Object redisData = redisTemplate.opsForValue().get("seckillProducts::" + id);
             SeckillProduct seckillProduct = null;
-            if (json != null) {
+
+            if (redisData instanceof String) {
+                String json = (String) redisData;
                 seckillProduct = objectMapper.readValue(json, SeckillProduct.class);
-                System.out.println("Deserialized Product: " + seckillProduct);
                 logger.debug("SeckillProduct from Redis: {}", seckillProduct);
+            } else if (redisData instanceof LinkedHashMap) {
+                // 直接将 LinkedHashMap 转换为 SeckillProduct 对象
+                seckillProduct = objectMapper.convertValue(redisData, SeckillProduct.class);
+                logger.debug("SeckillProduct from Redis (as LinkedHashMap): {}", seckillProduct);
             }
 
             if (seckillProduct == null) {
